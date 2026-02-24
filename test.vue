@@ -116,7 +116,7 @@
     </v-card>
   </v-col>
 
-  <!-- ========== PAINEL DIREITO: Dual Lists ========== -->
+  <!-- ========== PAINEL DIREITO: Assignments ========== -->
   <v-col cols="6" class="panel-right pl-2">
     <v-card flat outlined height="100%">
       <v-card-title class="panel-title py-2 px-3">
@@ -127,69 +127,60 @@
 
       <v-card-text>
 
-        <!-- ---- Currency Pairs ---- -->
-        <div class="dual-list-label mb-1">Currency Pairs</div>
-        <v-row no-gutters align="center" class="mb-4">
-          <!-- Available -->
-          <v-col cols="5">
-            <div class="dual-list-header">Available</div>
-            <v-text-field
-              v-model="searchCurrencyPair"
-              placeholder="Filter"
-              dense
-              outlined
-              hide-details
-              clearable
-              class="mb-1"
-              prepend-inner-icon="mdi-magnify"
-            />
-            <v-card outlined class="dual-list-box">
-              <v-list dense class="pa-0">
-                <v-list-item
-                  v-for="item in filteredAvailableCurrencyPairs"
-                  :key="item.id"
-                  :class="{ 'selected-item': selectedAvailableCurrencyPairs.includes(item.id) }"
-                  @click="toggleAvailableCurrencyPair(item.id)"
-                >
-                  <v-list-item-title>{{ item.name }}</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-card>
-          </v-col>
+        <!-- ---- Currency Pairs: Autocomplete multi-select ---- -->
+        <div class="section-label mb-2">Currency Pairs</div>
+        <v-autocomplete
+          v-model="assignedCurrencyPairs"
+          :items="allCurrencyPairs"
+          item-text="name"
+          item-value="id"
+          :search-input.sync="searchCurrencyPair"
+          label="Search and add currency pairs"
+          placeholder="e.g. AUDUSD"
+          outlined
+          dense
+          multiple
+          chips
+          deletable-chips
+          small-chips
+          hide-details
+          clearable
+          class="mb-4"
+          return-object
+          @change="searchCurrencyPair = ''"
+        >
+          <template v-slot:selection="{ item }">
+            <v-chip
+              close
+              small
+              color="primary"
+              class="ma-1"
+              @click:close="removeCurrencyPair(item)"
+            >
+              {{ item.name }}
+            </v-chip>
+          </template>
 
-          <!-- Transfer Buttons -->
-          <v-col cols="2" class="text-center">
-            <v-btn icon small @click="assignCurrencyPairs" :disabled="selectedAvailableCurrencyPairs.length === 0">
-              <v-icon>mdi-chevron-right</v-icon>
-            </v-btn>
-            <br />
-            <v-btn icon small @click="unassignCurrencyPairs" :disabled="selectedAssignedCurrencyPairs.length === 0">
-              <v-icon>mdi-chevron-left</v-icon>
-            </v-btn>
-          </v-col>
+          <template v-slot:item="{ item }">
+            <v-list-item-content>
+              <v-list-item-title>{{ item.name }}</v-list-item-title>
+            </v-list-item-content>
+            <v-list-item-action v-if="isCurrencyPairAssigned(item.id)">
+              <v-icon small color="primary">mdi-check</v-icon>
+            </v-list-item-action>
+          </template>
 
-          <!-- Assigned -->
-          <v-col cols="5">
-            <div class="dual-list-header">Assigned</div>
-            <v-card outlined class="dual-list-box mt-7">
-              <v-list dense class="pa-0">
-                <v-list-item
-                  v-for="item in assignedCurrencyPairs"
-                  :key="item.id"
-                  :class="{ 'selected-item': selectedAssignedCurrencyPairs.includes(item.id) }"
-                  @click="toggleAssignedCurrencyPair(item.id)"
-                >
-                  <v-list-item-title>{{ item.name }}</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-card>
-          </v-col>
-        </v-row>
+          <template v-slot:no-data>
+            <v-list-item>
+              <v-list-item-title class="grey--text">No currency pairs found</v-list-item-title>
+            </v-list-item>
+          </template>
+        </v-autocomplete>
 
         <v-divider class="mb-4" />
 
-        <!-- ---- Trading Groups ---- -->
-        <div class="dual-list-label mb-1">Trading Groups</div>
+        <!-- ---- Trading Groups: Dual List ---- -->
+        <div class="section-label mb-1">Trading Groups</div>
         <v-row no-gutters align="center">
           <!-- Available -->
           <v-col cols="5">
@@ -304,12 +295,11 @@ export default {
         numeric: v => !isNaN(v) || 'Must be a number'
       },
 
-      // Currency Pairs - dual list
+      // Currency Pairs - autocomplete multi-select
+      // allCurrencyPairs é carregado uma vez no mounted e reutilizado no autocomplete
       allCurrencyPairs: [],
-      assignedCurrencyPairs: [],
+      assignedCurrencyPairs: [], // array de objetos { id, name } selecionados
       searchCurrencyPair: '',
-      selectedAvailableCurrencyPairs: [],
-      selectedAssignedCurrencyPairs: [],
 
       // Trading Groups - dual list
       allTradingGroups: [],
@@ -332,21 +322,6 @@ export default {
       if (!this.searchBand) return this.priceBands
       return this.priceBands.filter(b =>
         b.name.toLowerCase().includes(this.searchBand.toLowerCase())
-      )
-    },
-
-    assignedCurrencyPairIds () {
-      return this.assignedCurrencyPairs.map(x => x.id)
-    },
-
-    availableCurrencyPairs () {
-      return this.allCurrencyPairs.filter(x => !this.assignedCurrencyPairIds.includes(x.id))
-    },
-
-    filteredAvailableCurrencyPairs () {
-      if (!this.searchCurrencyPair) return this.availableCurrencyPairs
-      return this.availableCurrencyPairs.filter(x =>
-        x.name.toLowerCase().includes(this.searchCurrencyPair.toLowerCase())
       )
     },
 
@@ -388,6 +363,7 @@ export default {
     async loadCurrencyPairs () {
       try {
         const res = await this.$http.get('/api/currency-pairs')
+        // Carrega uma vez, o v-autocomplete filtra localmente a partir daqui
         this.allCurrencyPairs = res.body
       } catch (e) {
         this.showSnackbar('Error loading currency pairs', 'error')
@@ -433,33 +409,14 @@ export default {
       if (this.$refs.form) this.$refs.form.resetValidation()
     },
 
-    // ---- Dual List: Currency Pairs ----
+    // ---- Currency Pairs: autocomplete helpers ----
 
-    toggleAvailableCurrencyPair (id) {
-      const idx = this.selectedAvailableCurrencyPairs.indexOf(id)
-      if (idx === -1) this.selectedAvailableCurrencyPairs.push(id)
-      else this.selectedAvailableCurrencyPairs.splice(idx, 1)
+    isCurrencyPairAssigned (id) {
+      return this.assignedCurrencyPairs.some(x => x.id === id)
     },
 
-    toggleAssignedCurrencyPair (id) {
-      const idx = this.selectedAssignedCurrencyPairs.indexOf(id)
-      if (idx === -1) this.selectedAssignedCurrencyPairs.push(id)
-      else this.selectedAssignedCurrencyPairs.splice(idx, 1)
-    },
-
-    assignCurrencyPairs () {
-      const toMove = this.availableCurrencyPairs.filter(x =>
-        this.selectedAvailableCurrencyPairs.includes(x.id)
-      )
-      this.assignedCurrencyPairs = [...this.assignedCurrencyPairs, ...toMove]
-      this.selectedAvailableCurrencyPairs = []
-    },
-
-    unassignCurrencyPairs () {
-      this.assignedCurrencyPairs = this.assignedCurrencyPairs.filter(x =>
-        !this.selectedAssignedCurrencyPairs.includes(x.id)
-      )
-      this.selectedAssignedCurrencyPairs = []
+    removeCurrencyPair (item) {
+      this.assignedCurrencyPairs = this.assignedCurrencyPairs.filter(x => x.id !== item.id)
     },
 
     // ---- Dual List: Trading Groups ----
@@ -534,10 +491,9 @@ export default {
     // ---- Helpers ----
 
     resetSelections () {
-      this.selectedAvailableCurrencyPairs = []
-      this.selectedAssignedCurrencyPairs = []
       this.selectedAvailableTradingGroups = []
       this.selectedAssignedTradingGroups = []
+      this.searchCurrencyPair = ''
     },
 
     showSnackbar (message, color = 'success') {
@@ -576,7 +532,7 @@ export default {
   overflow-y: auto;
 }
 
-.dual-list-label {
+.section-label {
   font-weight: 600;
   font-size: 13px;
   color: #555;
