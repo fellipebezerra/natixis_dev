@@ -128,3 +128,65 @@ getCurrencyId(text) {
 getTradingGroupId(text) {
   return this.tradingGroupsSelection.find(o => o.text === text)?.value;
 },
+
+
+async createPriceBand() {
+  this.showErrors = false;
+  if (this.isInvalidForm()) {
+    return;
+  }
+
+  const requests = [];
+
+  for (const currencyPairId of this.priceBand.currencyPairIds) {
+    for (const tradingGroupId of this.priceBand.tradingGroupIds) {
+      const params = {
+        $domain: window.location.origin,
+        priceBandDto: {
+          ...this.priceBand,
+          currencyPairId,
+          tradingGroupId
+        }
+      };
+      requests.push(createPriceBandUsingPOST(params));
+    }
+  }
+
+  try {
+    const responses = await Promise.all(requests);
+    const lastResponse = responses[responses.length - 1];
+    this.$emit('createResponse', true);
+    this.$emit('priceBandResponse', lastResponse.data);
+    this.hide();
+  } catch (error) {
+    this.catchNetworkError(error);
+    this.showBackedError(error);
+  }
+},
+
+
+isInvalidForm() {
+  return (
+    !this.priceBand.platformId ||
+    this.priceBand.currencyPairIds.length === 0 ||  // era !currencyPairId
+    this.priceBand.tradingGroupIds.length === 0 ||  // era !tradingGroupId
+    !this.priceBand.amount
+  );
+},
+```
+
+---
+
+## Resumo do fluxo
+```
+Utilizador seleciona:
+  - 2 Trading Groups
+  - 5 Currency Pairs
+
+createPriceBand() faz:
+  Promise.all([
+    POST(TG1 + CP1), POST(TG1 + CP2), POST(TG1 + CP3)...
+    POST(TG2 + CP1), POST(TG2 + CP2), POST(TG2 + CP3)...
+  ])
+  → 10 registos criados em paralelo, 1 único clique
+
