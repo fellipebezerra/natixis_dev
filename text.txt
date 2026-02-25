@@ -6,23 +6,36 @@
     no-outer-focus
     size="sm"
   >
-    <template v-slot="{ tags, inputAttrs, inputHandlers, removeTag }">
-      <b-form-input
-        v-bind="inputAttrs"
-        v-on="inputHandlers"
-        v-model="currencySearch"
-        placeholder="Type to search currency..."
-        list="currency-autocomplete"
-        size="sm"
-        @input="onCurrencyInput"
-      />
-      <datalist id="currency-autocomplete">
-        <option
-          v-for="option in filteredCurrencies"
-          :key="option.value"
-          :value="option.text"
+    <template v-slot="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
+      <div class="position-relative">
+        <b-form-input
+          v-bind="inputAttrs"
+          v-on="inputHandlers"
+          v-model="currencySearch"
+          placeholder="Enter currency pair by pressing Enter"
+          size="sm"
+          autocomplete="off"
+          @input="onCurrencyInput"
+          @keydown.enter.prevent="selectCurrency(addTag)"
         />
-      </datalist>
+        <!-- Dropdown de sugestões -->
+        <ul
+          v-if="currencySearch && filteredCurrencies.length"
+          class="list-group position-absolute w-100"
+          style="z-index:9999; max-height:200px; overflow-y:auto;"
+        >
+          <li
+            v-for="option in filteredCurrencies"
+            :key="option.value"
+            class="list-group-item list-group-item-action py-1"
+            style="cursor:pointer"
+            @mousedown.prevent="pickCurrency(option, addTag)"
+          >
+            {{ option.text }}
+          </li>
+        </ul>
+      </div>
+      <!-- Tags -->
       <div class="mt-1">
         <b-badge
           v-for="tag in tags"
@@ -30,8 +43,7 @@
           variant="dark"
           class="mr-1 mt-1"
         >
-          {{ tag }}
-          <span style="cursor:pointer" @click="removeTag(tag)"> ×</span>
+          {{ tag }} <span style="cursor:pointer" @click="removeTag(tag)">×</span>
         </b-badge>
       </div>
     </template>
@@ -46,22 +58,33 @@
     no-outer-focus
     size="sm"
   >
-    <template v-slot="{ tags, inputAttrs, inputHandlers, removeTag }">
-      <b-form-input
-        v-bind="inputAttrs"
-        v-on="inputHandlers"
-        v-model="tradingGroupSearch"
-        placeholder="Type to search trading group..."
-        list="trading-autocomplete"
-        size="sm"
-      />
-      <datalist id="trading-autocomplete">
-        <option
-          v-for="option in filteredTradingGroups"
-          :key="option.value"
-          :value="option.text"
+    <template v-slot="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
+      <div class="position-relative">
+        <b-form-input
+          v-bind="inputAttrs"
+          v-on="inputHandlers"
+          v-model="tradingGroupSearch"
+          placeholder="Enter trading group by pressing Enter"
+          size="sm"
+          autocomplete="off"
+          @keydown.enter.prevent="selectTradingGroup(addTag)"
         />
-      </datalist>
+        <ul
+          v-if="tradingGroupSearch && filteredTradingGroups.length"
+          class="list-group position-absolute w-100"
+          style="z-index:9999; max-height:200px; overflow-y:auto;"
+        >
+          <li
+            v-for="option in filteredTradingGroups"
+            :key="option.value"
+            class="list-group-item list-group-item-action py-1"
+            style="cursor:pointer"
+            @mousedown.prevent="pickTradingGroup(option, addTag)"
+          >
+            {{ option.text }}
+          </li>
+        </ul>
+      </div>
       <div class="mt-1">
         <b-badge
           v-for="tag in tags"
@@ -69,10 +92,42 @@
           variant="dark"
           class="mr-1 mt-1"
         >
-          {{ tag }}
-          <span style="cursor:pointer" @click="removeTag(tag)"> ×</span>
+          {{ tag }} <span style="cursor:pointer" @click="removeTag(tag)">×</span>
         </b-badge>
       </div>
     </template>
   </b-form-tags>
 </b-form-group>
+
+
+onCurrencyInput() {
+  // apenas para reagir ao input — o computed já filtra
+},
+
+pickCurrency(option, addTag) {
+  // Guarda o text sem "/" para a tag, mas o value (ID) para o submit
+  addTag(option.text.replace('/', ''));  // ex: AUDUSD em vez de AUD/USD
+  this.currencySearch = '';
+},
+
+selectCurrency(addTag) {
+  if (this.filteredCurrencies.length > 0) {
+    this.pickCurrency(this.filteredCurrencies[0], addTag);
+  }
+},
+
+pickTradingGroup(option, addTag) {
+  addTag(option.text);
+  this.tradingGroupSearch = '';
+},
+
+selectTradingGroup(addTag) {
+  if (this.filteredTradingGroups.length > 0) {
+    this.pickTradingGroup(this.filteredTradingGroups[0], addTag);
+  }
+},
+
+
+const currencyObj = this.currencyPairsSelection.find(
+  o => o.text.replace('/', '') === currencyText
+);
