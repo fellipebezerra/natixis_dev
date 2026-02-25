@@ -1,4 +1,9 @@
-<b-form-tags
+<!-- Currency -->
+<b-form-group
+  label="Currency"
+  label-for="currency-pair-input"
+>
+  <b-form-tags
     id="currency-pair-input"
     v-model="priceBand.currencyPairIds"
     :input-attrs="{ 'aria-describedby': 'currency-pair-help' }"
@@ -38,6 +43,59 @@
       </div>
     </template>
   </b-form-tags>
+  <b-form-invalid-feedback :state="priceBand.currencyPairIds.length > 0">
+    Please select at least one currency pair.
+  </b-form-invalid-feedback>
+</b-form-group>
+
+<!-- Trading Group -->
+<b-form-group
+  label="Trading Group"
+  label-for="trading-group-input"
+>
+  <b-form-tags
+    id="trading-group-input"
+    v-model="priceBand.tradingGroupIds"
+    placeholder="Enter trading group by pressing Enter"
+    remove-on-delete
+    size="sm"
+  >
+    <template v-slot="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
+      <b-form-input
+        v-bind="inputAttrs"
+        v-on="inputHandlers"
+        list="trading-group-list"
+        placeholder="Type a trading group..."
+        size="sm"
+      />
+      <datalist id="trading-group-list">
+        <option
+          v-for="option in tradingGroupsSelection"
+          :key="option.value"
+          :value="option.text"
+        />
+      </datalist>
+      <div class="mt-1">
+        <b-badge
+          v-for="tag in tags"
+          :key="tag"
+          variant="secondary"
+          class="mr-1"
+        >
+          {{ tag }}
+          <span
+            class="ml-1"
+            style="cursor:pointer"
+            @click="removeTag(tag)"
+          >×</span>
+        </b-badge>
+      </div>
+    </template>
+  </b-form-tags>
+  <b-form-invalid-feedback :state="priceBand.tradingGroupIds.length > 0">
+    Please select at least one trading group.
+  </b-form-invalid-feedback>
+</b-form-group>
 
 
 
