@@ -1,27 +1,24 @@
 <!-- Currency -->
-<b-form-group
-  label="Currency"
-  label-for="currency-pair-input"
->
+<b-form-group label="Currency" label-for="currency-pair-input">
   <b-form-tags
     id="currency-pair-input"
     v-model="priceBand.currencyPairIds"
-    :input-attrs="{ 'aria-describedby': 'currency-pair-help' }"
-    placeholder="Enter currency pair by pressing Enter"
-    remove-on-delete
+    no-outer-focus
     size="sm"
   >
-    <template v-slot="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
+    <template v-slot="{ tags, inputAttrs, inputHandlers, removeTag }">
       <b-form-input
         v-bind="inputAttrs"
         v-on="inputHandlers"
-        list="currency-list"
-        placeholder="Type a currency pair..."
+        v-model="currencySearch"
+        placeholder="Type to search currency..."
+        list="currency-autocomplete"
         size="sm"
+        @input="onCurrencyInput"
       />
-      <datalist id="currency-list">
+      <datalist id="currency-autocomplete">
         <option
-          v-for="option in currencyPairsSelection"
+          v-for="option in filteredCurrencies"
           :key="option.value"
           :value="option.text"
         />
@@ -30,47 +27,37 @@
         <b-badge
           v-for="tag in tags"
           :key="tag"
-          variant="secondary"
-          class="mr-1"
+          variant="dark"
+          class="mr-1 mt-1"
         >
           {{ tag }}
-          <span
-            class="ml-1"
-            style="cursor:pointer"
-            @click="removeTag(tag)"
-          >×</span>
+          <span style="cursor:pointer" @click="removeTag(tag)"> ×</span>
         </b-badge>
       </div>
     </template>
   </b-form-tags>
-  <b-form-invalid-feedback :state="priceBand.currencyPairIds.length > 0">
-    Please select at least one currency pair.
-  </b-form-invalid-feedback>
 </b-form-group>
 
 <!-- Trading Group -->
-<b-form-group
-  label="Trading Group"
-  label-for="trading-group-input"
->
+<b-form-group label="Trading Group" label-for="trading-group-input">
   <b-form-tags
     id="trading-group-input"
     v-model="priceBand.tradingGroupIds"
-    placeholder="Enter trading group by pressing Enter"
-    remove-on-delete
+    no-outer-focus
     size="sm"
   >
-    <template v-slot="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
+    <template v-slot="{ tags, inputAttrs, inputHandlers, removeTag }">
       <b-form-input
         v-bind="inputAttrs"
         v-on="inputHandlers"
-        list="trading-group-list"
-        placeholder="Type a trading group..."
+        v-model="tradingGroupSearch"
+        placeholder="Type to search trading group..."
+        list="trading-autocomplete"
         size="sm"
       />
-      <datalist id="trading-group-list">
+      <datalist id="trading-autocomplete">
         <option
-          v-for="option in tradingGroupsSelection"
+          v-for="option in filteredTradingGroups"
           :key="option.value"
           :value="option.text"
         />
@@ -79,114 +66,13 @@
         <b-badge
           v-for="tag in tags"
           :key="tag"
-          variant="secondary"
-          class="mr-1"
+          variant="dark"
+          class="mr-1 mt-1"
         >
           {{ tag }}
-          <span
-            class="ml-1"
-            style="cursor:pointer"
-            @click="removeTag(tag)"
-          >×</span>
+          <span style="cursor:pointer" @click="removeTag(tag)"> ×</span>
         </b-badge>
       </div>
     </template>
   </b-form-tags>
-  <b-form-invalid-feedback :state="priceBand.tradingGroupIds.length > 0">
-    Please select at least one trading group.
-  </b-form-invalid-feedback>
 </b-form-group>
-
-
-
-priceBand: {
-  platformId: null,
-  currencyPairIds: [],   // era currencyPairId (singular)
-  tradingGroupIds: [],   // era tradingGroupId (singular)
-  // ... outros campos
-}
-
-
-
-async submitPriceBand() {
-  for (const currency of this.priceBand.currencyPairIds) {
-    for (const tradingGroup of this.priceBand.tradingGroupIds) {
-      await this.createPriceBand({
-        platformId: this.priceBand.platformId,
-        currencyPairId: this.getCurrencyId(currency),
-        tradingGroupId: this.getTradingGroupId(tradingGroup),
-        // ... outros campos
-      });
-    }
-  }
-}
-
-// Helpers para converter o texto de volta para ID
-getCurrencyId(text) {
-  return this.currencyPairsSelection.find(o => o.text === text)?.value;
-},
-getTradingGroupId(text) {
-  return this.tradingGroupsSelection.find(o => o.text === text)?.value;
-},
-
-
-async createPriceBand() {
-  this.showErrors = false;
-  if (this.isInvalidForm()) {
-    return;
-  }
-
-  const requests = [];
-
-  for (const currencyPairId of this.priceBand.currencyPairIds) {
-    for (const tradingGroupId of this.priceBand.tradingGroupIds) {
-      const params = {
-        $domain: window.location.origin,
-        priceBandDto: {
-          ...this.priceBand,
-          currencyPairId,
-          tradingGroupId
-        }
-      };
-      requests.push(createPriceBandUsingPOST(params));
-    }
-  }
-
-  try {
-    const responses = await Promise.all(requests);
-    const lastResponse = responses[responses.length - 1];
-    this.$emit('createResponse', true);
-    this.$emit('priceBandResponse', lastResponse.data);
-    this.hide();
-  } catch (error) {
-    this.catchNetworkError(error);
-    this.showBackedError(error);
-  }
-},
-
-
-isInvalidForm() {
-  return (
-    !this.priceBand.platformId ||
-    this.priceBand.currencyPairIds.length === 0 ||  // era !currencyPairId
-    this.priceBand.tradingGroupIds.length === 0 ||  // era !tradingGroupId
-    !this.priceBand.amount
-  );
-},
-```
-
----
-
-## Resumo do fluxo
-```
-Utilizador seleciona:
-  - 2 Trading Groups
-  - 5 Currency Pairs
-
-createPriceBand() faz:
-  Promise.all([
-    POST(TG1 + CP1), POST(TG1 + CP2), POST(TG1 + CP3)...
-    POST(TG2 + CP1), POST(TG2 + CP2), POST(TG2 + CP3)...
-  ])
-  → 10 registos criados em paralelo, 1 único clique
-
