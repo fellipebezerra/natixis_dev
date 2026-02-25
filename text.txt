@@ -38,3 +38,35 @@
       </div>
     </template>
   </b-form-tags>
+
+
+
+priceBand: {
+  platformId: null,
+  currencyPairIds: [],   // era currencyPairId (singular)
+  tradingGroupIds: [],   // era tradingGroupId (singular)
+  // ... outros campos
+}
+
+
+
+async submitPriceBand() {
+  for (const currency of this.priceBand.currencyPairIds) {
+    for (const tradingGroup of this.priceBand.tradingGroupIds) {
+      await this.createPriceBand({
+        platformId: this.priceBand.platformId,
+        currencyPairId: this.getCurrencyId(currency),
+        tradingGroupId: this.getTradingGroupId(tradingGroup),
+        // ... outros campos
+      });
+    }
+  }
+}
+
+// Helpers para converter o texto de volta para ID
+getCurrencyId(text) {
+  return this.currencyPairsSelection.find(o => o.text === text)?.value;
+},
+getTradingGroupId(text) {
+  return this.tradingGroupsSelection.find(o => o.text === text)?.value;
+},
