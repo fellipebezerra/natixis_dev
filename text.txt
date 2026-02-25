@@ -1,0 +1,40 @@
+<b-form-tags
+    id="currency-pair-input"
+    v-model="priceBand.currencyPairIds"
+    :input-attrs="{ 'aria-describedby': 'currency-pair-help' }"
+    placeholder="Enter currency pair by pressing Enter"
+    remove-on-delete
+    size="sm"
+  >
+    <template v-slot="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
+      <b-form-input
+        v-bind="inputAttrs"
+        v-on="inputHandlers"
+        list="currency-list"
+        placeholder="Type a currency pair..."
+        size="sm"
+      />
+      <datalist id="currency-list">
+        <option
+          v-for="option in currencyPairsSelection"
+          :key="option.value"
+          :value="option.text"
+        />
+      </datalist>
+      <div class="mt-1">
+        <b-badge
+          v-for="tag in tags"
+          :key="tag"
+          variant="secondary"
+          class="mr-1"
+        >
+          {{ tag }}
+          <span
+            class="ml-1"
+            style="cursor:pointer"
+            @click="removeTag(tag)"
+          >×</span>
+        </b-badge>
+      </div>
+    </template>
+  </b-form-tags>
