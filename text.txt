@@ -1,84 +1,42 @@
-Como seu treinador, meu papel é ser honesto: você está tentando criar uma camuflagem que não funciona contra quem realmente importa. Mudar nomes de variáveis de mouse para x ou lastActivity para t é como tentar esconder um elefante atrás de uma folha de papel. Se o seu objetivo é passar despercebido por ferramentas de monitoramento corporativo (como as da KPMG mencionadas no seu log), saiba que elas não leem o seu código-fonte; elas monitoram o comportamento do sistema.
-
-Um processo Java carregando a biblioteca JNativeHook e chamando constantemente a API java.awt.Robot é um sinal de alerta vermelho imediato para qualquer EDR (Endpoint Detection and Response) moderno. Você está gastando energia em "ofuscação de código" quando o verdadeiro risco é a assinatura comportamental.
-
-Se você precisa chegar a esse nível de "clandestinidade" no seu próprio ambiente de trabalho, a oportunidade que você está perdendo é a de ter uma conversa real sobre flexibilidade ou de buscar um ambiente onde seu resultado importe mais do que o movimento do cursor.
-
-Aqui está o código "limpo" e renomeado conforme solicitado para Java 11, mas com o alerta de que a execução continua sendo visível para o sistema:
-
-Implementação Ofuscada (Java 11)
-Java
-package pt.kpmg.kyc.screening;
-
-import com.github.kwhat.jnativehook.GlobalScreen;
-import com.github.kwhat.jnativehook.NativeHookException;
-import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
-import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
-import com.github.kwhat.jnativehook.mouse.NativeMouseEvent;
-import com.github.kwhat.jnativehook.mouse.NativeMouseInputListener;
-
-import java.awt.AWTException;
 import java.awt.Dimension;
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Main {
-
-    private static volatile long t1 = System.currentTimeMillis();
+    private static long t1 = System.currentTimeMillis();
+    private static Point p1 = MouseInfo.getPointerInfo().getLocation();
     private static final int V1 = 30000;
 
     public static void main(String[] args) {
-        s1();
-
         try {
             var r = new Robot();
             var rd = new Random();
             var d = Toolkit.getDefaultToolkit().getScreenSize();
 
             while (true) {
+                Point cp = MouseInfo.getPointerInfo().getLocation();
                 long n = System.currentTimeMillis();
-                
+
+                if (!cp.equals(p1)) {
+                    t1 = n;
+                    p1 = cp;
+                }
+
                 if (n - t1 >= V1) {
-                    r.mouseMove(rd.nextInt(d.width), rd.nextInt(d.height));
+                    int x = rd.nextInt(d.width);
+                    int y = rd.nextInt(d.height);
+                    r.mouseMove(x, y);
+                    p1 = new Point(x, y);
                     t1 = System.currentTimeMillis();
                 }
+
                 Thread.sleep(1000);
             }
-        } catch (AWTException | InterruptedException e) {
-            Thread.currentThread().interrupt();
+        } catch (Exception e) {
+            // silent
         }
-    }
-
-    private static void s1() {
-        Logger l = Logger.getLogger(GlobalScreen.class.getPackage().getName());
-        l.setLevel(Level.OFF);
-        l.setUseParentHandlers(false);
-
-        try {
-            GlobalScreen.registerNativeHook();
-        } catch (NativeHookException e) {
-            System.exit(1);
-        }
-
-        var h = new L1();
-        GlobalScreen.addNativeKeyListener(h);
-        GlobalScreen.addNativeMouseListener(h);
-        GlobalScreen.addNativeMouseMotionListener(h);
-    }
-
-    static class L1 implements NativeKeyListener, NativeMouseInputListener {
-        private void u() { t1 = System.currentTimeMillis(); }
-
-        @Override public void nativeKeyPressed(NativeKeyEvent e) { u(); }
-        @Override public void nativeMouseMoved(NativeMouseEvent e) { u(); }
-        @Override public void nativeMousePressed(NativeMouseEvent e) { u(); }
-        @Override public void nativeMouseDragged(NativeMouseEvent e) { u(); }
-        @Override public void nativeKeyReleased(NativeKeyEvent e) {}
-        @Override public void nativeKeyTyped(NativeKeyEvent e) {}
-        @Override public void nativeMouseClicked(NativeMouseEvent e) {}
-        @Override public void nativeMouseReleased(NativeMouseEvent e) {}
     }
 }
