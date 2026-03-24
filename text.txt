@@ -1,1 +1,155 @@
--Xms2G -Xmx2G -Dcom.sun.management.jmxremote.port=3333 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Dfxbrain.connection.type=jms -Xincgc -XX:MaxPermSize=256M -Xloggc:c:\dev\temp\gc.log -Dcreditcheck.service.type=legacy -Dterracotta.server.url=DK296056:9510 -Dversion=2016.1.1 -Dappname=bloomberg -XX:-OmitStackTraceInFastThrow -Djava.ext.dirs=C:\PROGRA~1\Java\openjdk-8u272-b10-windows-64\jre\lib\ext;C:\PROGRA~1\Tibco\tibrv\8.4\lib\
+2026-03-24 15:25:34,330 main ERROR Unable to create file C:/soft/etrading/log/brainhub.log java.io.IOException: Could not create directory C:\soft\etrading\log
+	at org.apache.logging.log4j.core.util.FileUtils.mkdir(FileUtils.java:120)
+	at org.apache.logging.log4j.core.util.FileUtils.makeParentDirs(FileUtils.java:137)
+	at org.apache.logging.log4j.core.appender.rolling.RollingFileManager$RollingFileManagerFactory.createManager(RollingFileManager.java:732)
+	at org.apache.logging.log4j.core.appender.rolling.RollingFileManager$RollingFileManagerFactory.createManager(RollingFileManager.java:716)
+	at org.apache.logging.log4j.core.appender.AbstractManager.getManager(AbstractManager.java:114)
+	at org.apache.logging.log4j.core.appender.OutputStreamManager.getManager(OutputStreamManager.java:100)
+	at org.apache.logging.log4j.core.appender.rolling.RollingFileManager.getFileManager(RollingFileManager.java:217)
+	at org.apache.logging.log4j.core.appender.RollingFileAppender$Builder.build(RollingFileAppender.java:146)
+	at org.apache.logging.log4j.core.appender.RollingFileAppender$Builder.build(RollingFileAppender.java:62)
+	at org.apache.logging.log4j.core.config.plugins.util.PluginBuilder.build(PluginBuilder.java:122)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.createPluginObject(AbstractConfiguration.java:1120)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.createConfiguration(AbstractConfiguration.java:1045)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.createConfiguration(AbstractConfiguration.java:1037)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.doConfigure(AbstractConfiguration.java:651)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.initialize(AbstractConfiguration.java:247)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.start(AbstractConfiguration.java:293)
+	at org.apache.logging.log4j.core.LoggerContext.setConfiguration(LoggerContext.java:626)
+	at org.apache.logging.log4j.core.LoggerContext.reconfigure(LoggerContext.java:699)
+	at org.apache.logging.log4j.core.LoggerContext.reconfigure(LoggerContext.java:716)
+	at org.apache.logging.log4j.core.LoggerContext.start(LoggerContext.java:270)
+	at org.apache.logging.log4j.core.impl.Log4jContextFactory.getContext(Log4jContextFactory.java:155)
+	at org.apache.logging.log4j.core.impl.Log4jContextFactory.getContext(Log4jContextFactory.java:47)
+	at org.apache.logging.log4j.LogManager.getContext(LogManager.java:196)
+	at org.apache.logging.log4j.LogManager.getLogger(LogManager.java:599)
+	at com.natixis.etrading.fxhub.adapter.Hub.<clinit>(Hub.java:38)
+	at com.natixis.etrading.fxhub.adapter.Launcher.main(Launcher.java:7)
+
+2026-03-24 15:25:34,338 main ERROR Could not create plugin of type class org.apache.logging.log4j.core.appender.RollingFileAppender for element RollingFile: java.lang.IllegalStateException: ManagerFactory [org.apache.logging.log4j.core.appender.rolling.RollingFileManager$RollingFileManagerFactory@5dd6264] unable to create manager for [C:/soft/etrading/log/brainhub.log] with data [org.apache.logging.log4j.core.appender.rolling.RollingFileManager$FactoryData@1ffe63b9[pattern=C:/soft/etrading/log/brainhub-%-d{yyyy-MM-dd}.log, append=true, bufferedIO=true, bufferSize=8192, policy=CompositeTriggeringPolicy(policies=[OnStartupTriggeringPolicy, CronTriggeringPolicy(schedule=0 0 5 * * ?)]), strategy=DefaultRolloverStrategy(min=1, max=7, useMax=true), advertiseURI=null, layout=%-d{yyyy MMM dd HH:mm:ss,SSS} %5p %c{1}:%L - %m%n, filePermissions=null, fileOwner=null]] java.lang.IllegalStateException: ManagerFactory [org.apache.logging.log4j.core.appender.rolling.RollingFileManager$RollingFileManagerFactory@5dd6264] unable to create manager for [C:/soft/etrading/log/brainhub.log] with data [org.apache.logging.log4j.core.appender.rolling.RollingFileManager$FactoryData@1ffe63b9[pattern=C:/soft/etrading/log/brainhub-%-d{yyyy-MM-dd}.log, append=true, bufferedIO=true, bufferSize=8192, policy=CompositeTriggeringPolicy(policies=[OnStartupTriggeringPolicy, CronTriggeringPolicy(schedule=0 0 5 * * ?)]), strategy=DefaultRolloverStrategy(min=1, max=7, useMax=true), advertiseURI=null, layout=%-d{yyyy MMM dd HH:mm:ss,SSS} %5p %c{1}:%L - %m%n, filePermissions=null, fileOwner=null]]
+	at org.apache.logging.log4j.core.appender.AbstractManager.getManager(AbstractManager.java:116)
+	at org.apache.logging.log4j.core.appender.OutputStreamManager.getManager(OutputStreamManager.java:100)
+	at org.apache.logging.log4j.core.appender.rolling.RollingFileManager.getFileManager(RollingFileManager.java:217)
+	at org.apache.logging.log4j.core.appender.RollingFileAppender$Builder.build(RollingFileAppender.java:146)
+	at org.apache.logging.log4j.core.appender.RollingFileAppender$Builder.build(RollingFileAppender.java:62)
+	at org.apache.logging.log4j.core.config.plugins.util.PluginBuilder.build(PluginBuilder.java:122)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.createPluginObject(AbstractConfiguration.java:1120)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.createConfiguration(AbstractConfiguration.java:1045)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.createConfiguration(AbstractConfiguration.java:1037)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.doConfigure(AbstractConfiguration.java:651)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.initialize(AbstractConfiguration.java:247)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.start(AbstractConfiguration.java:293)
+	at org.apache.logging.log4j.core.LoggerContext.setConfiguration(LoggerContext.java:626)
+	at org.apache.logging.log4j.core.LoggerContext.reconfigure(LoggerContext.java:699)
+	at org.apache.logging.log4j.core.LoggerContext.reconfigure(LoggerContext.java:716)
+	at org.apache.logging.log4j.core.LoggerContext.start(LoggerContext.java:270)
+	at org.apache.logging.log4j.core.impl.Log4jContextFactory.getContext(Log4jContextFactory.java:155)
+	at org.apache.logging.log4j.core.impl.Log4jContextFactory.getContext(Log4jContextFactory.java:47)
+	at org.apache.logging.log4j.LogManager.getContext(LogManager.java:196)
+	at org.apache.logging.log4j.LogManager.getLogger(LogManager.java:599)
+	at com.natixis.etrading.fxhub.adapter.Hub.<clinit>(Hub.java:38)
+	at com.natixis.etrading.fxhub.adapter.Launcher.main(Launcher.java:7)
+
+2026-03-24 15:25:34,342 main ERROR Unable to invoke factory method in class org.apache.logging.log4j.core.appender.RollingFileAppender for element RollingFile: java.lang.IllegalStateException: No factory method found for class org.apache.logging.log4j.core.appender.RollingFileAppender java.lang.IllegalStateException: No factory method found for class org.apache.logging.log4j.core.appender.RollingFileAppender
+	at org.apache.logging.log4j.core.config.plugins.util.PluginBuilder.findFactoryMethod(PluginBuilder.java:236)
+	at org.apache.logging.log4j.core.config.plugins.util.PluginBuilder.build(PluginBuilder.java:134)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.createPluginObject(AbstractConfiguration.java:1120)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.createConfiguration(AbstractConfiguration.java:1045)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.createConfiguration(AbstractConfiguration.java:1037)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.doConfigure(AbstractConfiguration.java:651)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.initialize(AbstractConfiguration.java:247)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.start(AbstractConfiguration.java:293)
+	at org.apache.logging.log4j.core.LoggerContext.setConfiguration(LoggerContext.java:626)
+	at org.apache.logging.log4j.core.LoggerContext.reconfigure(LoggerContext.java:699)
+	at org.apache.logging.log4j.core.LoggerContext.reconfigure(LoggerContext.java:716)
+	at org.apache.logging.log4j.core.LoggerContext.start(LoggerContext.java:270)
+	at org.apache.logging.log4j.core.impl.Log4jContextFactory.getContext(Log4jContextFactory.java:155)
+	at org.apache.logging.log4j.core.impl.Log4jContextFactory.getContext(Log4jContextFactory.java:47)
+	at org.apache.logging.log4j.LogManager.getContext(LogManager.java:196)
+	at org.apache.logging.log4j.LogManager.getLogger(LogManager.java:599)
+	at com.natixis.etrading.fxhub.adapter.Hub.<clinit>(Hub.java:38)
+	at com.natixis.etrading.fxhub.adapter.Launcher.main(Launcher.java:7)
+
+2026-03-24 15:25:34,357 main ERROR Null object returned for RollingFile in Appenders.
+2026-03-24 15:25:34.714 ERROR Hub - Uncaught thread exception : thread=main
+org.springframework.beans.factory.NoSuchBeanDefinitionException: No bean named 'serviceManager' available
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.getBeanDefinition(DefaultListableBeanFactory.java:872) ~[spring-beans-5.3.20.jar:5.3.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getMergedLocalBeanDefinition(AbstractBeanFactory.java:1344) ~[spring-beans-5.3.20.jar:5.3.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:309) ~[spring-beans-5.3.20.jar:5.3.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208) ~[spring-beans-5.3.20.jar:5.3.20]
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1154) ~[spring-context-5.3.20.jar:5.3.20]
+	at com.natixis.etrading.fxhub.adapter.Hub.springMain(Hub.java:72) ~[classes/:?]
+	at com.natixis.etrading.fxhub.adapter.Launcher.main(Launcher.java:7) ~[classes/:?]
+2026-03-24 15:25:34.746  INFO Hub - Shutting down spring context
+2026-03-24 15:25:34,842 Thread-1 ERROR Unable to create file C:/soft/etrading/log/brainhub.log java.io.IOException: Could not create directory C:\soft\etrading\log
+	at org.apache.logging.log4j.core.util.FileUtils.mkdir(FileUtils.java:120)
+	at org.apache.logging.log4j.core.util.FileUtils.makeParentDirs(FileUtils.java:137)
+	at org.apache.logging.log4j.core.appender.rolling.RollingFileManager$RollingFileManagerFactory.createManager(RollingFileManager.java:732)
+	at org.apache.logging.log4j.core.appender.rolling.RollingFileManager$RollingFileManagerFactory.createManager(RollingFileManager.java:716)
+	at org.apache.logging.log4j.core.appender.AbstractManager.getManager(AbstractManager.java:114)
+	at org.apache.logging.log4j.core.appender.OutputStreamManager.getManager(OutputStreamManager.java:100)
+	at org.apache.logging.log4j.core.appender.rolling.RollingFileManager.getFileManager(RollingFileManager.java:217)
+	at org.apache.logging.log4j.core.appender.RollingFileAppender$Builder.build(RollingFileAppender.java:146)
+	at org.apache.logging.log4j.core.appender.RollingFileAppender$Builder.build(RollingFileAppender.java:62)
+	at org.apache.logging.log4j.core.config.plugins.util.PluginBuilder.build(PluginBuilder.java:122)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.createPluginObject(AbstractConfiguration.java:1120)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.createConfiguration(AbstractConfiguration.java:1045)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.createConfiguration(AbstractConfiguration.java:1037)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.doConfigure(AbstractConfiguration.java:651)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.initialize(AbstractConfiguration.java:247)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.start(AbstractConfiguration.java:293)
+	at org.apache.logging.log4j.core.LoggerContext.setConfiguration(LoggerContext.java:626)
+	at org.apache.logging.log4j.core.LoggerContext.reconfigure(LoggerContext.java:699)
+	at org.apache.logging.log4j.core.LoggerContext.reconfigure(LoggerContext.java:716)
+	at org.apache.logging.log4j.core.LoggerContext.start(LoggerContext.java:270)
+	at org.apache.logging.log4j.core.impl.Log4jContextFactory.getContext(Log4jContextFactory.java:155)
+	at org.apache.logging.log4j.core.impl.Log4jContextFactory.getContext(Log4jContextFactory.java:47)
+	at org.apache.logging.log4j.LogManager.getContext(LogManager.java:157)
+	at com.natixis.etrading.fxhub.adapter.Hub$2.run(Hub.java:63)
+
+2026-03-24 15:25:34,844 Thread-1 ERROR Could not create plugin of type class org.apache.logging.log4j.core.appender.RollingFileAppender for element RollingFile: java.lang.IllegalStateException: ManagerFactory [org.apache.logging.log4j.core.appender.rolling.RollingFileManager$RollingFileManagerFactory@5dd6264] unable to create manager for [C:/soft/etrading/log/brainhub.log] with data [org.apache.logging.log4j.core.appender.rolling.RollingFileManager$FactoryData@22c4e91a[pattern=C:/soft/etrading/log/brainhub-%-d{yyyy-MM-dd}.log, append=true, bufferedIO=true, bufferSize=8192, policy=CompositeTriggeringPolicy(policies=[OnStartupTriggeringPolicy, CronTriggeringPolicy(schedule=0 0 5 * * ?)]), strategy=DefaultRolloverStrategy(min=1, max=7, useMax=true), advertiseURI=null, layout=%-d{yyyy MMM dd HH:mm:ss,SSS} %5p %c{1}:%L - %m%n, filePermissions=null, fileOwner=null]] java.lang.IllegalStateException: ManagerFactory [org.apache.logging.log4j.core.appender.rolling.RollingFileManager$RollingFileManagerFactory@5dd6264] unable to create manager for [C:/soft/etrading/log/brainhub.log] with data [org.apache.logging.log4j.core.appender.rolling.RollingFileManager$FactoryData@22c4e91a[pattern=C:/soft/etrading/log/brainhub-%-d{yyyy-MM-dd}.log, append=true, bufferedIO=true, bufferSize=8192, policy=CompositeTriggeringPolicy(policies=[OnStartupTriggeringPolicy, CronTriggeringPolicy(schedule=0 0 5 * * ?)]), strategy=DefaultRolloverStrategy(min=1, max=7, useMax=true), advertiseURI=null, layout=%-d{yyyy MMM dd HH:mm:ss,SSS} %5p %c{1}:%L - %m%n, filePermissions=null, fileOwner=null]]
+	at org.apache.logging.log4j.core.appender.AbstractManager.getManager(AbstractManager.java:116)
+	at org.apache.logging.log4j.core.appender.OutputStreamManager.getManager(OutputStreamManager.java:100)
+	at org.apache.logging.log4j.core.appender.rolling.RollingFileManager.getFileManager(RollingFileManager.java:217)
+	at org.apache.logging.log4j.core.appender.RollingFileAppender$Builder.build(RollingFileAppender.java:146)
+	at org.apache.logging.log4j.core.appender.RollingFileAppender$Builder.build(RollingFileAppender.java:62)
+	at org.apache.logging.log4j.core.config.plugins.util.PluginBuilder.build(PluginBuilder.java:122)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.createPluginObject(AbstractConfiguration.java:1120)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.createConfiguration(AbstractConfiguration.java:1045)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.createConfiguration(AbstractConfiguration.java:1037)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.doConfigure(AbstractConfiguration.java:651)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.initialize(AbstractConfiguration.java:247)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.start(AbstractConfiguration.java:293)
+	at org.apache.logging.log4j.core.LoggerContext.setConfiguration(LoggerContext.java:626)
+	at org.apache.logging.log4j.core.LoggerContext.reconfigure(LoggerContext.java:699)
+	at org.apache.logging.log4j.core.LoggerContext.reconfigure(LoggerContext.java:716)
+	at org.apache.logging.log4j.core.LoggerContext.start(LoggerContext.java:270)
+	at org.apache.logging.log4j.core.impl.Log4jContextFactory.getContext(Log4jContextFactory.java:155)
+	at org.apache.logging.log4j.core.impl.Log4jContextFactory.getContext(Log4jContextFactory.java:47)
+	at org.apache.logging.log4j.LogManager.getContext(LogManager.java:157)
+	at com.natixis.etrading.fxhub.adapter.Hub$2.run(Hub.java:63)
+
+2026-03-24 15:25:34,844 Thread-1 ERROR Unable to invoke factory method in class org.apache.logging.log4j.core.appender.RollingFileAppender for element RollingFile: java.lang.IllegalStateException: No factory method found for class org.apache.logging.log4j.core.appender.RollingFileAppender java.lang.IllegalStateException: No factory method found for class org.apache.logging.log4j.core.appender.RollingFileAppender
+	at org.apache.logging.log4j.core.config.plugins.util.PluginBuilder.findFactoryMethod(PluginBuilder.java:236)
+	at org.apache.logging.log4j.core.config.plugins.util.PluginBuilder.build(PluginBuilder.java:134)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.createPluginObject(AbstractConfiguration.java:1120)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.createConfiguration(AbstractConfiguration.java:1045)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.createConfiguration(AbstractConfiguration.java:1037)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.doConfigure(AbstractConfiguration.java:651)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.initialize(AbstractConfiguration.java:247)
+	at org.apache.logging.log4j.core.config.AbstractConfiguration.start(AbstractConfiguration.java:293)
+	at org.apache.logging.log4j.core.LoggerContext.setConfiguration(LoggerContext.java:626)
+	at org.apache.logging.log4j.core.LoggerContext.reconfigure(LoggerContext.java:699)
+	at org.apache.logging.log4j.core.LoggerContext.reconfigure(LoggerContext.java:716)
+	at org.apache.logging.log4j.core.LoggerContext.start(LoggerContext.java:270)
+	at org.apache.logging.log4j.core.impl.Log4jContextFactory.getContext(Log4jContextFactory.java:155)
+	at org.apache.logging.log4j.core.impl.Log4jContextFactory.getContext(Log4jContextFactory.java:47)
+	at org.apache.logging.log4j.LogManager.getContext(LogManager.java:157)
+	at com.natixis.etrading.fxhub.adapter.Hub$2.run(Hub.java:63)
+
+2026-03-24 15:25:34,846 Thread-1 ERROR Null object returned for RollingFile in Appenders.
+2026-03-24 15:25:34.850  INFO Hub - Shutting down log4j2 context
+Java HotSpot(TM) 64-Bit Server VM warning: ignoring option MaxPermSize=256M; support was removed in 8.0
+Java HotSpot(TM) 64-Bit Server VM warning: Using incremental CMS is deprecated and will likely be removed in a future release
+
+Process finished with exit code 1
